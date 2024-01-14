@@ -108,24 +108,33 @@ async function listEvents(auth) {
         orderBy: "startTime",
     })).data.items;
     const mainWindow = BrowserWindow.getAllWindows()[0];
-    mainWindow.webContents.send("scheduleUpdate", [...primaryEvents, ...generalEducationClassEvents, ...departmentClassEvents].filter((event) => {
-        const now = new Date().toISOString().split("T")[0];
-        const start = event.start.dateTime || event.start.date;
-        return start == now;
-    }).sort((a, b) => {
+    mainWindow.webContents.send("scheduleUpdate", [...primaryEvents, ...generalEducationClassEvents, ...departmentClassEvents].sort((a, b) => {
         const startA = new Date(a.start.dateTime || a.start.date);
         const startB = new Date(b.start.dateTime || b.start.date);
         return startA.getTime() - startB.getTime();
+    }).filter((event) => {
+        if (new Date().getHours() >= 18) {
+            const now = new Date().toLocaleDateString();
+            const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString();
+            const start = new Date(event.start.dateTime || event.start.date).toLocaleDateString();
+            return now == start || tomorrow == start;
+        } else {
+            const now = new Date().toLocaleDateString();
+            const start = new Date(event.start.dateTime || event.start.date).toLocaleDateString();
+            return now == start;
+        }
     }).map((event) => {
         const start = new Date(event.start.dateTime || event.start.date);
         const end = new Date(event.end.dateTime || event.end.date);
         return {
             time: {
                 start: {
+                    date: start.getDate(),
                     hours: start.getHours(),
                     minutes: start.getMinutes(),
                 },
                 end: {
+                    date: end.getDate(),
                     hours: end.getHours(),
                     minutes: end.getMinutes(),
                 }

@@ -2,7 +2,7 @@ const { ipcRenderer } = require("electron");
 
 function clockUpdate() {
     const date = new Date();
-    const hours = ("0" + date.getHours()).slice(-2);
+    const hours = date.getHours();
     const minutes = ("0" + date.getMinutes()).slice(-2);
     const seconds = ("0" + date.getSeconds()).slice(-2);
     const time = `${hours}:${minutes}:${seconds}`;
@@ -33,11 +33,14 @@ window.addEventListener("DOMContentLoaded", () => {
             event.classList.add("event");
             const eventTime = document.createElement("span");
             eventTime.classList.add("event-time");
-            eventTime.innerHTML = `${schedule.time.start.hours}:${schedule.time.start.minutes}-${schedule.time.end.hours}:${schedule.time.end.minutes}`;
+            eventTime.innerHTML = `${schedule.time.start.date}日 ${schedule.time.start.hours}:${("0" + schedule.time.start.minutes).slice(-2)} - ${schedule.time.end.hours}:${("0" + schedule.time.end.minutes).slice(-2)}`;
             event.appendChild(eventTime);
             const eventTitle = document.createElement("span");
             eventTitle.classList.add("event-title");
             eventTitle.innerHTML = schedule.title;
+            if (schedule.time.start.date == new Date().getDate() && schedule.time.end.hours < new Date().getHours() && schedule.time.end.minutes < new Date().getMinutes()) {
+                event.classList.add("finished");
+            }
             event.appendChild(eventTitle);
             scheduleList.appendChild(event);
         });
