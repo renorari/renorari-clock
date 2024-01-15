@@ -38,7 +38,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const eventTitle = document.createElement("span");
             eventTitle.classList.add("event-title");
             eventTitle.innerHTML = schedule.title;
-            if (schedule.time.start.date == new Date().getDate() && schedule.time.end.hours < new Date().getHours() && schedule.time.end.minutes < new Date().getMinutes()) {
+            if ((schedule.time.end.hours < new Date().getHours() && schedule.time.end.date <= new Date().getDate()) || (schedule.time.end.hours == new Date().getHours() && schedule.time.end.minutes < new Date().getMinutes() && schedule.time.end.date <= new Date().getDate())) {
                 event.classList.add("finished");
             }
             event.appendChild(eventTitle);

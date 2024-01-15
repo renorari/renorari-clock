@@ -25,7 +25,7 @@ const createWindow = () => {
     });
 
     authorize().then(listEvents).catch(console.error);
-    cron.schedule("0 0 * * * *", async () => {
+    cron.schedule("* * * * *", async () => {
         authorize().then(listEvents).catch(console.error);
     });
 };
